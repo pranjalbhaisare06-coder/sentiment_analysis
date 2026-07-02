@@ -36,7 +36,9 @@ def stemming(content):
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json(force=True)
-    text = data['text']
+    text = data.get('text') if isinstance(data, dict) else None
+    if not isinstance(text, str) or not text.strip():
+        return jsonify({'error': 'text is required'}), 400
 
     # Preprocess the input text
     processed_text = stemming(text)
